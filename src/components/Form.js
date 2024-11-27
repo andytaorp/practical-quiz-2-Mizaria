@@ -4,7 +4,7 @@ export default function Form({ onAddTask }) {
   const [description, setDescription] = useState("");
 
   const handleSubmit = (e) => {
-    e.preventDefault(); 
+    e.preventDefault();
 
     if (description.trim() === "") {
       alert("Task description cannot be empty.");
@@ -12,13 +12,13 @@ export default function Form({ onAddTask }) {
     }
 
     const newTask = {
-      id: Date.now(), 
+      id: Date.now(),
       description: description.trim(),
       completed: false,
     };
 
-    onAddTask(newTask); 
-    setDescription(""); 
+    onAddTask(newTask);
+    setDescription("");
   };
 
   return (
@@ -26,10 +26,11 @@ export default function Form({ onAddTask }) {
       <input
         type="text"
         value={description}
-        placeholder="Enter task description"
+        placeholder="New Task" 
         onChange={(e) => setDescription(e.target.value)}
       />
       <button type="submit">Add Task</button>
     </form>
   );
 }
+

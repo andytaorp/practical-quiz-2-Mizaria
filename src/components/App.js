@@ -10,22 +10,19 @@ const initialTasks = [
 function App() {
   const [tasks, setTasks] = useState(initialTasks);
 
-
-
   const handleAddTask = (newTask) => {
     setTasks((prevTasks) => [...prevTasks, newTask]);
   };
 
-  const handleCompleteTask = (id,updatedcompleteStatus) => {
+  const handleCompleteTask = (id, updatedcompleteStatus) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
-        task.id === id 
-          ? { ...task, completed: updatedcompleteStatus } 
-          : task 
+        task.id === id
+          ? { ...task, completed: updatedcompleteStatus }
+          : task
       )
     );
   };
-  
 
   const handleDeleteTask = (id) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
@@ -40,9 +37,9 @@ function App() {
         onDeleteTask={handleDeleteTask}
         onToggleTask={handleCompleteTask}
       />
-
     </div>
   );
 }
 
 export default App;
+
