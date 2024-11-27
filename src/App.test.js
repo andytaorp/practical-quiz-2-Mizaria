@@ -30,52 +30,72 @@ describe("Task Manager App", () => {
     expect(screen.queryByText(/No Task/i)).not.toBeInTheDocument(); // Ensure no task was added
   });
 
-  test("marks a task as completed", () => {
+  test("marks a task as completed", async () => {
+    render(<App />);
+    
+    const input = screen.getByPlaceholderText(/New Task/i);
+    const button = screen.getByText(/Add Task/i);
+  
+    // Adding a new task
+    fireEvent.change(input, { target: { value: "Do Homework" } });
+    fireEvent.click(button);
+  
+    // Wait for the checkbox to be rendered
+    const checkboxes = await screen.findAllByRole("checkbox"); // Use findAllByRole to ensure it waits for the checkbox
+  
+    // Ensure the checkbox is there and interact with it
+    fireEvent.click(checkboxes[checkboxes.length - 1]); // Click the checkbox for the last task added
+  
+    // Check if the task is now completed (line-through style)
+    expect(screen.getByText(/Do Homework/i)).toHaveStyle("text-decoration: line-through");
+  });
+  
+  
+  test("unmarks a completed task", async () => {
     render(<App />);
     const input = screen.getByPlaceholderText(/New Task/i);
     const button = screen.getByText(/Add Task/i);
-
+  
+    // Add a new task
     fireEvent.change(input, { target: { value: "Do Homework" } });
     fireEvent.click(button);
-
-    const checkbox = screen.getByRole("checkbox");
-    fireEvent.click(checkbox);
-
-    expect(screen.getByText(/Do Homework/i)).toHaveStyle(
-      "text-decoration: line-through"
-    );
+  
+    // Wait for the checkboxes to appear
+    const checkboxes = await screen.findAllByRole("checkbox");
+    
+    // Mark the task as completed (click checkbox)
+    fireEvent.click(checkboxes[checkboxes.length - 1]);
+  
+    // Ensure the task is completed (checked checkbox and line-through style)
+    expect(screen.getByText(/Do Homework/i)).toHaveStyle("text-decoration: line-through");
+  
+    // Unmark the task (click checkbox again)
+    fireEvent.click(checkboxes[checkboxes.length - 1]);
+  
+    // Ensure the task is uncompleted (unchecked checkbox and no line-through style)
+    expect(screen.getByText(/Do Homework/i)).not.toHaveStyle("text-decoration: line-through");
   });
-
-  test("unmarks a completed task", () => {
-    render(<App />);
-    const input = screen.getByPlaceholderText(/New Task/i);
-    const button = screen.getByText(/Add Task/i);
-
-    fireEvent.change(input, { target: { value: "Do Homework" } });
-    fireEvent.click(button);
-
-    const checkbox = screen.getByRole("checkbox");
-    fireEvent.click(checkbox); // Mark as completed
-    fireEvent.click(checkbox); // Unmark
-
-    expect(screen.getByText(/Do Homework/i)).not.toHaveStyle(
-      "text-decoration: line-through"
-    );
-  });
+  
 
   test("deletes a task", () => {
     render(<App />);
     const input = screen.getByPlaceholderText(/New Task/i);
     const button = screen.getByText(/Add Task/i);
-
+  
     fireEvent.change(input, { target: { value: "Wash Dishes" } });
     fireEvent.click(button);
-
-    const deleteButton = screen.getByText(/Delete/i);
+  
+    // Ensure the task appears in the DOM first
+    expect(screen.getByText(/Wash Dishes/i)).toBeInTheDocument();
+  
+    // Use the aria-label for a specific delete button
+    const deleteButton = screen.getByLabelText(/Delete Wash Dishes/i);
     fireEvent.click(deleteButton);
-
+  
+    // Ensure the task is removed after deletion
     expect(screen.queryByText(/Wash Dishes/i)).not.toBeInTheDocument();
   });
+  
 
   test("shows all tasks correctly", () => {
     render(<App />);
